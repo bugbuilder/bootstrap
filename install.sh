@@ -69,7 +69,6 @@ sources() {
 	curl https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
 }
 
-
 sources_dep() {
 
 	mkdir -p /etc/apt/apt.conf.d
@@ -139,6 +138,10 @@ install() {
 	apt clean
 }
 
+install_docker() {
+	curl https://get.docker.com -sSf | sh
+}
+
 reminder() {
 	local C_GREEN='\033[0;32m'
 	
@@ -157,6 +160,7 @@ main() {
 	install
 	prepare_nvidia
 	setup_sudo
+	install_docker
 	reminder
 }
 
