@@ -62,15 +62,19 @@ sources() {
 	
 	deb http://security.debian.org/ stretch/updates main contrib non-free
 	deb-src http://security.debian.org/ stretch/updates main contrib non-free
+
+	deb http://download.virtualbox.org/virtualbox/debian stretch contrib
+
 	EOF
-       
+        
+
 	echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
 
 	curl https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+	curl http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc | apt-key add -
 }
 
 sources_dep() {
-
 	mkdir -p /etc/apt/apt.conf.d
 	echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99translations	
    
@@ -113,6 +117,19 @@ firmware() {
 		--no-install-recommends
 }
 
+install_debs() {
+	packages=( releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb ) 	
+	for package in "${packages[@]}"; do
+		owner=$(dirname "$package")
+		deb=$(basename "$package")
+	
+		curl https://"${owner}"/"${deb}" -o /tmp/"${deb}"
+
+		dpkg -i /tmp/"${deb}"
+	done
+
+}
+
 install() {
 	apt update || true
 	apt -y upgrade
@@ -129,6 +146,7 @@ install() {
 		tree \
 		tmux \
 		unzip \
+		virtualbox-5.2 \
 		zip \
 		zsh \
 		--no-install-recommends
@@ -140,6 +158,18 @@ install() {
 
 install_docker() {
 	curl https://get.docker.com -sSf | sh
+}
+
+install_docker_toolkit() {
+	binaries=( machine/releases/download/v0.15.0/docker-machine-Linux-x86_64 compose/releases/download/1.22.0/docker-compose-Linux-x86_64 ) 	
+	for binary in "${binaries[@]}"; do
+		version=$(dirname "$binary")
+		bin=$(basename "$binary")
+	
+		curl -L https://github.com/docker/"${version}"/"${bin}" > /tmp/"${bin}"
+		chmod +x /tmp/"${bin}"
+		cp /tmp/"${bin}" /usr/local/bin/"${bin/-Linux-x86_64/}"
+	done
 }
 
 reminder() {
@@ -158,11 +188,11 @@ main() {
 	sources
 	firmware
 	install
-	prepare_nvidia
-	setup_sudo
 	install_docker
+	install_docker_toolkit
+	install_debs
+	prepare_nvidia
 	reminder
 }
 
 main "$@"
-
