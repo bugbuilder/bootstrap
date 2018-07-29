@@ -123,7 +123,6 @@ install() {
 		apparmor \
 		bridge-utils \
 		gcc \
-		git \
 		google-chrome-stable \
 		htop \
 		make \
