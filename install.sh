@@ -42,6 +42,9 @@ setup_sudo() {
 	gpasswd -a "$TARGET_USER" sudo
 	gpasswd -a "$TARGET_USER" systemd-journal
 	gpasswd -a "$TARGET_USER" systemd-network
+        
+	groupadd docker
+	gpasswd -a "$TARGET_USER" docker
 
 	{ \
 		echo -e "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL"; \
@@ -71,7 +74,8 @@ sources() {
 	echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
 
 	curl https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-	curl http://download.virtualbox.org/virtualbox/debian/oracle_vbox.asc | apt-key add -
+	curl https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+	curl https://www.virtualbox.org/download/oracle_vbox.asc | apt-key add -
 }
 
 sources_dep() {
@@ -86,6 +90,7 @@ sources_dep() {
 		dirmngr \
 		gnupg2 \
 		lsb-release \
+		linux-headers-amd64 \
 		--no-install-recommends
 }
 
@@ -98,7 +103,6 @@ prepare_nvidia() {
 		libstdc++6:i386 \
 		libgcc1:i386 \
 		libncurses5:i386 \
-		linux-headers-amd64 \
 		rpm \
 		zlib1g:i386 \
 		--no-install-recommends
@@ -115,6 +119,8 @@ firmware() {
 		firmware-iwlwifi \
 		firmware-realtek \
 		--no-install-recommends
+	modprobe -r iwlwifi
+	modprobe iwlwifi
 }
 
 install_debs() {
@@ -178,7 +184,6 @@ reminder() {
 	echo -e "${C_GREEN}"
 	echo -e "Don't forget:"
 	echo -e " nvidia		- run the installer nvidia/${NVIDIA_RUN}"
-	echo -e " iwlwif		- modprobe -r iwlwifi; modprobe iwlwifi "
 	echo -e "${C_RESET}"
 }
 
