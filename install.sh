@@ -66,16 +66,17 @@ sources() {
 	deb http://security.debian.org/ stretch/updates main contrib non-free
 	deb-src http://security.debian.org/ stretch/updates main contrib non-free
 
-	deb http://download.virtualbox.org/virtualbox/debian stretch contrib
-
 	EOF
         
 
 	echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+	echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
+	echo "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian stretch contrib" > /etc/apt/sources.list.d/virtualbox.list
 
-	curl https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-	curl https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
-	curl https://www.virtualbox.org/download/oracle_vbox.asc | apt-key add -
+	curl -sSL https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+	curl -sSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add -
+	curl -sSL https://www.virtualbox.org/download/oracle_vbox.asc | apt-key add -
+	curl -sSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 }
 
 sources_dep() {
@@ -144,6 +145,7 @@ install() {
 		alsa-utils \
 		apparmor \
 		bridge-utils \
+		code \
 		gcc \
 		google-chrome-stable \
 		htop \
