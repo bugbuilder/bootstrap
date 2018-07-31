@@ -140,8 +140,8 @@ install_golang() {
 	(
 	kernel=$(uname -s | tr '[:upper:]' '[:lower:]')
 	curl -sSL "https://storage.googleapis.com/golang/go${GO_VERSION}.${kernel}-amd64.tar.gz" | tar -v -C /tmp -xz
-	local user="$USER"
 	sudo mv /tmp/go /usr/local
+
 	CGO_ENABLED=0 go install -a -installsuffix cgo std
 	)
 }
@@ -211,6 +211,10 @@ reminder() {
 	echo -e "${C_RESET}"
 }
 
+git_settings() {
+	cp .gitconfig /home/"${TARGET_USER}"
+	cp .gitignore_global /home/"${TARGET_USER}"
+}
 main() {
 	check_is_sudo
 	setup_sudo
@@ -222,6 +226,7 @@ main() {
 	install_debs
 	prepare_nvidia
 	install_golang
+	git_settings
 	reminder
 }
 
