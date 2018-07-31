@@ -1,5 +1,6 @@
 [alias]
 	s = status -s
+	ca = !git add -A && git commit -av
 
 [color "branch"]
 	current = yellow reverse
@@ -24,3 +25,4 @@
 	user = bugbuilder
 [core]
 	excludesfile = ~/.gitignore_global
+	editor = vim
