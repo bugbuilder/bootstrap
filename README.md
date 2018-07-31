@@ -8,7 +8,8 @@ To install clone repo cd into it and run ./install.sh to setup the environment.
 
 ## TODO
 
-- [ ] Add golang support
+- [X] Add golang support
+- [ ] Add external disk
 - [ ] Add oh my zsh
 - [ ] Add docker alias like aws, http, vscode, etc.
 - [ ] Use a Configuration management like salt, ansible or puppet.

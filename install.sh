@@ -124,6 +124,28 @@ firmware() {
 	modprobe iwlwifi
 }
 
+install_golang() {
+	export GO_VERSION
+	GO_VERSION=$(curl -sSL "https://golang.org/VERSION?m=text")
+	export GO_SRC=/usr/local/go
+
+	if [[ -d "$GO_SRC" ]]; then
+		sudo rm -rf "$GO_SRC"
+		sudo rm -rf "$GOPATH"
+	fi
+
+	GO_VERSION=${GO_VERSION#go}
+	
+	# subshell
+	(
+	kernel=$(uname -s | tr '[:upper:]' '[:lower:]')
+	curl -sSL "https://storage.googleapis.com/golang/go${GO_VERSION}.${kernel}-amd64.tar.gz" | tar -v -C /tmp -xz
+	local user="$USER"
+	sudo mv /tmp/go /usr/local
+	CGO_ENABLED=0 go install -a -installsuffix cgo std
+	)
+}
+
 install_debs() {
 	packages=( releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb ) 	
 	for package in "${packages[@]}"; do
@@ -199,7 +221,9 @@ main() {
 	install_docker_toolkit
 	install_debs
 	prepare_nvidia
+#	install_golang
 	reminder
 }
 
-main "$@"
+#main "$@"
+install_golang
