@@ -221,9 +221,8 @@ main() {
 	install_docker_toolkit
 	install_debs
 	prepare_nvidia
-#	install_golang
+	install_golang
 	reminder
 }
 
-#main "$@"
-install_golang
+main "$@"
