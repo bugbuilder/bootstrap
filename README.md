@@ -12,6 +12,8 @@ To install clone repo cd into it and run ./install.sh to setup the environment.
 - [ ] Add external disk
 - [X] Add gitconfig
 - [ ] Add oh my zsh
+- [ ] Add tmux settings
+- [ ] Add vim/nvim plugins
 - [ ] Add docker alias like aws, http, vscode, etc.
 - [ ] Use a Configuration management like salt, ansible or puppet.
 - [ ] Split bootstrap in baseline like OS supports like fireware, nvidia, etc and tooling like vagrant, docker, etc.
