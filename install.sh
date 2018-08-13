@@ -36,13 +36,12 @@ check_is_sudo() {
 	fi
 }
 
-setup_sudo() { 
+setup_sudo() {
 	get_user
 
 	gpasswd -a "$TARGET_USER" sudo
 	gpasswd -a "$TARGET_USER" systemd-journal
 	gpasswd -a "$TARGET_USER" systemd-network
-        
 	groupadd docker
 	gpasswd -a "$TARGET_USER" docker
 
@@ -59,15 +58,14 @@ sources() {
 	cat <<-EOF > /etc/apt/sources.list
 	deb http://httpredir.debian.org/debian stretch main contrib non-free
 	deb-src http://httpredir.debian.org/debian/ stretch main contrib non-free
-	
+
 	deb http://httpredir.debian.org/debian/ stretch-updates main contrib non-free
 	deb-src http://httpredir.debian.org/debian/ stretch-updates main contrib non-free
-	
+
 	deb http://security.debian.org/ stretch/updates main contrib non-free
 	deb-src http://security.debian.org/ stretch/updates main contrib non-free
 
 	EOF
-        
 
 	echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
 	echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list
@@ -81,15 +79,15 @@ sources() {
 
 sources_dep() {
 	mkdir -p /etc/apt/apt.conf.d
-	echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99translations	
-   
+	echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99translations
+
 	apt update || true
 	apt install -y \
 		apt-transport-https \
 		ca-certificates \
 		curl \
 		dirmngr \
-		gnupg2 \
+		QQvgnupg2 \
 		lsb-release \
 		linux-headers-amd64 \
 		--no-install-recommends
@@ -135,7 +133,7 @@ install_golang() {
 	fi
 
 	GO_VERSION=${GO_VERSION#go}
-	
+
 	# subshell
 	(
 	kernel=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -147,11 +145,11 @@ install_golang() {
 }
 
 install_debs() {
-	packages=( releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb ) 	
+	packages=( releases.hashicorp.com/vagrant/2.1.2/vagrant_2.1.2_x86_64.deb )
 	for package in "${packages[@]}"; do
 		owner=$(dirname "$package")
 		deb=$(basename "$package")
-	
+
 		curl https://"${owner}"/"${deb}" -o /tmp/"${deb}"
 
 		dpkg -i /tmp/"${deb}"
@@ -190,12 +188,40 @@ install_docker() {
 	curl https://get.docker.com -sSf | sh
 }
 
+install_vim() {
+	# create subshell
+	(
+	cd "$HOME"
+
+	# install .vim files
+	sudo rm -rf "${HOME}/.vim"
+	git clone --recursive https://github.com/bugbuilder/.vim.git "${HOME}/.vim"
+	(
+	cd "${HOME}/.vim"
+	make install
+	)
+
+	# install things needed for deoplete for vim
+	sudo apt update || true
+
+	sudo apt install -y \
+		python3-pip \
+		python3-setuptools \
+		--no-install-recommends
+
+	pip3 install -U \
+		setuptools \
+		wheel \
+		neovim
+	)
+}
+
 install_docker_toolkit() {
-	binaries=( machine/releases/download/v0.15.0/docker-machine-Linux-x86_64 compose/releases/download/1.22.0/docker-compose-Linux-x86_64 ) 	
+	binaries=( machine/releases/download/v0.15.0/docker-machine-Linux-x86_64 compose/releases/download/1.22.0/docker-compose-Linux-x86_64 )
 	for binary in "${binaries[@]}"; do
 		version=$(dirname "$binary")
 		bin=$(basename "$binary")
-	
+
 		curl -L https://github.com/docker/"${version}"/"${bin}" > /tmp/"${bin}"
 		chmod +x /tmp/"${bin}"
 		cp /tmp/"${bin}" /usr/local/bin/"${bin/-Linux-x86_64/}"
@@ -204,7 +230,7 @@ install_docker_toolkit() {
 
 reminder() {
 	local C_GREEN='\033[0;32m'
-	
+
 	echo -e "${C_GREEN}"
 	echo -e "Don't forget:"
 	echo -e " nvidia		- run the installer nvidia/${NVIDIA_RUN}"
