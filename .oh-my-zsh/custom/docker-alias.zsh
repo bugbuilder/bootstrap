@@ -1,8 +1,18 @@
-export DOCKER_REPO_PREFIX=jess
 
 http(){
     docker run -t --rm \
-        -v /var/run/docker.sock:/var/run/docker.sock \
+        --net=host \
 		--log-driver none \
-		${DOCKER_REPO_PREFIX}/httpie "$@"
+		jess/httpie "$@"
+}
+
+terraform(){
+    docker run -it --rm \
+        -v "${HOME}:${HOME}:ro" \
+		-v "$(pwd):/usr/src/repo" \
+		-v /tmp:/tmp \
+		--workdir /usr/src/repo \
+		--log-driver none \
+        --user "${UID}:${GID}" \
+		hashicorp/terraform:0.11.8 "$@"
 }
