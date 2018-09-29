@@ -43,3 +43,16 @@ kustomize(){
         --user "${UID}:${GID}" \
 		bennu/kustomize:v1.0.8 "$@"
 }
+
+hugo(){
+    docker run -it --rm \
+        -v "${HOME}:${HOME}:ro" \
+		-v "$(pwd):/usr/src/repo" \
+		-v /tmp:/tmp \
+        -p 1313:1313 \
+		--workdir /usr/src/repo \
+		--log-driver none \
+        --user "${UID}:${GID}" \
+		bennu/hugo:0.49 "$@"
+}
+
