@@ -1,6 +1,14 @@
 [alias]
 	s = status -s
 	ca = !git add -A && git commit -av
+	l = !git lg-fmt
+	h = !git lg-fmt --full-history --all
+
+	lg-fmt = log --graph --format=format:'%C(green)%h%C(reset) %C(cyan)(%ad)%C(reset) %C(white)%s%C(reset) %C(dim white) <%an>%C(reset)%C(auto)%d%C(reset)' --date=format:'%Y-%m-%d %H:%M:%S'
+	
+	tags = tag -l
+	branches = branch -a
+	remotes = remote -v
 
 [color "branch"]
 	current = yellow reverse
@@ -20,9 +28,11 @@
 
 [user]
 	email = nelson@bennu.cl
-	name = Nelson
-[github]
-	user = bugbuilder
+	name = bugbuilder
+
 [core]
 	excludesfile = ~/.gitignore_global
 	editor = vim
+
+[merge]
+	tool = vimdiff
