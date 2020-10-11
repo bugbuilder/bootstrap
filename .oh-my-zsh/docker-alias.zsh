@@ -42,3 +42,14 @@ vault() {
     docker run --rm --name vault_client -it --cap-add IPC_LOCK -eVAULT_TOKEN=${token} -eVAULT_ADDR=http://${addr}:8200 vault:${tag} "$@"
 }
 
+terraform(){
+    docker run -it --rm \
+        -e HOME=/root \
+        -v "${HOME}:/root:ro" \
+	-v "$(pwd):/usr/src/repo" \
+	-v /tmp:/tmp \
+	--workdir /usr/src/repo \
+	--log-driver none \
+        --user "${UID}:${GID}" \
+	hashicorp/terraform:0.13.4 "$@"
+}
